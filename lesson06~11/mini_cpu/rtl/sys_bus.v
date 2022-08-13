@@ -30,7 +30,7 @@ module sys_bus (
     output [31:0] uart_addr,          // cpu -> uart
     output reg    uart_wen
 );
-    // instruction
+   
     assign imem_addr = cpu_imem_addr;
     assign cpu_imem_data = imem_data;
 
@@ -44,7 +44,7 @@ module sys_bus (
 
     always @(*) begin
         case (cpu_dmem_addr[31:28])
-            4'h0: begin
+            4'h0: begin     //ROM
                 cpu_dmem_data_out <= dmem_rom_read_data;
                 dmem_wen <= 0;
                 uart_wen <= 0;

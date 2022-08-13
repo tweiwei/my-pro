@@ -7,6 +7,7 @@ module dmem(
     output reg [31:0] dout
 );
     reg[31:0] dmem_reg[0:4095];
+
     always @(posedge clk) begin
         if(we) begin
             dmem_reg[addr] <= din;
@@ -14,6 +15,7 @@ module dmem(
         dout <= dmem_reg[addr];
     end
 endmodule
+
 
 module imem (
     input  [11:0] addr1,

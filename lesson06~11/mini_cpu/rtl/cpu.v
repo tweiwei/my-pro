@@ -43,16 +43,19 @@ module cpu(
   wire [31:0] regs_regWData; 
   wire [31:0] regs_regRData1; 
   wire [31:0] regs_regRData2; 
+
   wire [2:0] aluControl_funct3; 
   wire [6:0] aluControl_funct7; 
   wire       aluControl_itype; 
   wire [1:0] aluControl_aluCtrlOp; 
   wire [3:0] aluControl_aluOp; 
+
   wire [31:0] alu_aluIn1; 
   wire [31:0] alu_aluIn2; 
   wire [3:0] alu_aluOp; 
   wire [31:0] alu_aluOut; 
   wire [31:0] branch_add;
+
   wire [4:0] forwarding_rs1; 
   wire [4:0] forwarding_rs2; 
   wire [4:0] forwarding_exMemRd; 
@@ -83,7 +86,6 @@ module cpu(
   wire  if_id_valid; 
   wire [31:0] if_id_instr; 
   wire [31:0] if_id_pc; 
-  wire [31:0] if_id_pc_next; 
   wire  if_id_noflush; 
 
   wire [31:0] id_ex_in_regRData2; 
@@ -97,7 +99,6 @@ module cpu(
   wire [31:0] id_ex_data_regRData2; 
   wire [31:0] id_ex_data_regRData1; 
   wire [31:0] id_ex_data_pc; 
-  wire [31:0] id_ex_data_pc_next; 
   wire [4:0] id_ex_data_rs1; 
   wire [4:0] id_ex_data_rs2; 
 
@@ -110,7 +111,6 @@ module cpu(
   wire [1:0] id_ex_ctrl_in_ex_ctrl_jump; 
   wire  id_ex_ctrl_in_mem_ctrl_memRead; 
   wire  id_ex_ctrl_in_mem_ctrl_memWrite; 
-  wire  id_ex_ctrl_in_mem_ctrl_taken; 
   wire [1:0] id_ex_ctrl_in_mem_ctrl_maskMode; 
   wire  id_ex_ctrl_in_mem_ctrl_sext; 
   wire  id_ex_ctrl_in_wb_ctrl_toReg; 
@@ -127,7 +127,6 @@ module cpu(
   wire [1:0] id_ex_ctrl_data_ex_ctrl_jump; 
   wire  id_ex_ctrl_data_mem_ctrl_memRead; 
   wire  id_ex_ctrl_data_mem_ctrl_memWrite; 
-  wire  id_ex_ctrl_data_mem_ctrl_taken; 
   wire [1:0] id_ex_ctrl_data_mem_ctrl_maskMode; 
   wire  id_ex_ctrl_data_mem_ctrl_sext; 
   wire  id_ex_ctrl_data_wb_ctrl_toReg; 
@@ -138,7 +137,6 @@ module cpu(
   wire [31:0] ex_mem_in_regRData2; 
   wire [31:0] ex_mem_in_pc; 
   wire  ex_mem_flush; 
-  wire  ex_mem_valid; 
   wire [4:0] ex_mem_data_regWAddr; 
   wire [31:0] ex_mem_data_regRData2; 
   wire [31:0] ex_mem_data_result; 
@@ -146,29 +144,22 @@ module cpu(
 
   wire  ex_mem_ctrl_in_mem_ctrl_memRead; 
   wire  ex_mem_ctrl_in_mem_ctrl_memWrite; 
-  wire  ex_mem_ctrl_in_mem_ctrl_taken; 
   wire [1:0] ex_mem_ctrl_in_mem_ctrl_maskMode; 
   wire  ex_mem_ctrl_in_mem_ctrl_sext; 
   wire  ex_mem_ctrl_in_wb_ctrl_toReg; 
   wire  ex_mem_ctrl_in_wb_ctrl_regWrite; 
-  wire  ex_mem_ctrl_in_noflush; 
   wire  ex_mem_ctrl_flush; 
-  wire  ex_mem_ctrl_valid; 
   wire  ex_mem_ctrl_data_mem_ctrl_memRead; 
   wire  ex_mem_ctrl_data_mem_ctrl_memWrite; 
-  wire  ex_mem_ctrl_data_mem_ctrl_taken; 
   wire [1:0] ex_mem_ctrl_data_mem_ctrl_maskMode; 
   wire  ex_mem_ctrl_data_mem_ctrl_sext; 
   wire  ex_mem_ctrl_data_wb_ctrl_toReg; 
   wire  ex_mem_ctrl_data_wb_ctrl_regWrite; 
-  wire  ex_mem_ctrl_data_noflush; 
 
   wire [4:0] mem_wb_in_regWAddr; 
   wire [31:0] mem_wb_in_result; 
   wire [31:0] mem_wb_in_readData; 
   wire [31:0] mem_wb_in_pc; 
-  wire  mem_wb_flush; 
-  wire  mem_wb_valid; 
   wire [4:0] mem_wb_data_regWAddr; 
   wire [31:0] mem_wb_data_result; 
   wire [31:0] mem_wb_data_readData; 
@@ -176,12 +167,8 @@ module cpu(
 
   wire  mem_wb_ctrl_in_wb_ctrl_toReg; 
   wire  mem_wb_ctrl_in_wb_ctrl_regWrite; 
-  wire  mem_wb_ctrl_in_noflush; 
-  wire  mem_wb_ctrl_flush; 
-  wire  mem_wb_ctrl_valid; 
   wire  mem_wb_ctrl_data_wb_ctrl_toReg; 
   wire  mem_wb_ctrl_data_wb_ctrl_regWrite; 
-  wire  mem_wb_ctrl_data_noflush; 
 
   wire [31:0] forward_rs1_data;
   wire [31:0] forward_rs2_data;
@@ -254,7 +241,7 @@ module cpu(
     .IF_ID_flush(hazard_IF_ID_flush)
   );
   
-  pre_if u_pre_if( 
+  pre_if u_pre_if ( 
     .instr(imem_instr),
     .pc(pc),
     .pre_pc(pre_pc)
@@ -269,7 +256,6 @@ module cpu(
     .valid(if_id_valid),
     .out_instr(if_id_instr),
     .out_pc(if_id_pc),
-    .out_pc_next(if_id_pc_next),
     .out_noflush(if_id_noflush)
   );
 
@@ -305,7 +291,6 @@ module cpu(
     .in_rs2_data(id_ex_in_regRData2),
     .in_rs1_data(id_ex_in_regRData1),
     .in_pc(if_id_pc),
-    .in_pc_next(if_id_pc_next),
     .in_rs1_addr(decode_rs1_addr),
     .in_rs2_addr(decode_rs2_addr),
     .flush(id_ex_flush),
@@ -317,7 +302,6 @@ module cpu(
     .out_rs2_data(id_ex_data_regRData2),
     .out_rs1_data(id_ex_data_regRData1),
     .out_pc(id_ex_data_pc),
-    .out_pc_next(id_ex_data_pc_next),
     .out_rs1_addr(id_ex_data_rs1),
     .out_rs2_addr(id_ex_data_rs2)
   );
@@ -334,7 +318,6 @@ module cpu(
     .in_ex_ctrl_jump(id_ex_ctrl_in_ex_ctrl_jump),
     .in_mem_ctrl_mem_read(id_ex_ctrl_in_mem_ctrl_memRead),
     .in_mem_ctrl_mem_write(id_ex_ctrl_in_mem_ctrl_memWrite),
-    .in_mem_ctrl_taken(id_ex_ctrl_in_mem_ctrl_taken),
     .in_mem_ctrl_mask_mode(id_ex_ctrl_in_mem_ctrl_maskMode),
     .in_mem_ctrl_sext(id_ex_ctrl_in_mem_ctrl_sext),
     .in_wb_ctrl_to_reg(id_ex_ctrl_in_wb_ctrl_toReg),
@@ -351,7 +334,6 @@ module cpu(
     .out_ex_ctrl_jump(id_ex_ctrl_data_ex_ctrl_jump),
     .out_mem_ctrl_mem_read(id_ex_ctrl_data_mem_ctrl_memRead),
     .out_mem_ctrl_mem_write(id_ex_ctrl_data_mem_ctrl_memWrite),
-    .out_mem_ctrl_taken(id_ex_ctrl_data_mem_ctrl_taken),
     .out_mem_ctrl_mask_mode(id_ex_ctrl_data_mem_ctrl_maskMode),
     .out_mem_ctrl_sext(id_ex_ctrl_data_mem_ctrl_sext),
     .out_wb_ctrl_to_reg(id_ex_ctrl_data_wb_ctrl_toReg),
@@ -365,12 +347,10 @@ module cpu(
     .in_regWAddr(ex_mem_in_regWAddr),
     .in_regRData2(ex_mem_in_regRData2),
     .ex_result_sel(id_ex_ctrl_data_ex_ctrl_resultSel),
-    .in_pc_next(id_ex_data_pc_next),
     .id_ex_data_imm(id_ex_data_imm),
     .in_pc(ex_mem_in_pc),
     .alu_result(alu_aluOut),
     .flush(ex_mem_flush),
-    .valid(ex_mem_valid),
     .data_regWAddr(ex_mem_data_regWAddr),
     .data_regRData2(ex_mem_data_regRData2),
     .data_result(ex_mem_data_result),
@@ -382,22 +362,17 @@ module cpu(
     .reset(reset),
     .in_mem_ctrl_memRead(ex_mem_ctrl_in_mem_ctrl_memRead),
     .in_mem_ctrl_memWrite(ex_mem_ctrl_in_mem_ctrl_memWrite),
-    .in_mem_ctrl_taken(ex_mem_ctrl_in_mem_ctrl_taken),
     .in_mem_ctrl_maskMode(ex_mem_ctrl_in_mem_ctrl_maskMode),
     .in_mem_ctrl_sext(ex_mem_ctrl_in_mem_ctrl_sext),
     .in_wb_ctrl_toReg(ex_mem_ctrl_in_wb_ctrl_toReg),
     .in_wb_ctrl_regWrite(ex_mem_ctrl_in_wb_ctrl_regWrite),
-    .in_noflush(ex_mem_ctrl_in_noflush),
     .flush(ex_mem_ctrl_flush),
-    .valid(ex_mem_ctrl_valid),
-    .data_mem_ctrl_memRead(ex_mem_ctrl_data_mem_ctrl_memRead),
-    .data_mem_ctrl_memWrite(ex_mem_ctrl_data_mem_ctrl_memWrite),
-    .data_mem_ctrl_taken(ex_mem_ctrl_data_mem_ctrl_taken),
-    .data_mem_ctrl_maskMode(ex_mem_ctrl_data_mem_ctrl_maskMode),
-    .data_mem_ctrl_sext(ex_mem_ctrl_data_mem_ctrl_sext),
-    .data_wb_ctrl_toReg(ex_mem_ctrl_data_wb_ctrl_toReg),
-    .data_wb_ctrl_regWrite(ex_mem_ctrl_data_wb_ctrl_regWrite),
-    .data_noflush(ex_mem_ctrl_data_noflush)
+    .out_mem_ctrl_memRead(ex_mem_ctrl_data_mem_ctrl_memRead),
+    .out_mem_ctrl_memWrite(ex_mem_ctrl_data_mem_ctrl_memWrite),
+    .out_mem_ctrl_maskMode(ex_mem_ctrl_data_mem_ctrl_maskMode),
+    .out_mem_ctrl_sext(ex_mem_ctrl_data_mem_ctrl_sext),
+    .out_wb_ctrl_toReg(ex_mem_ctrl_data_wb_ctrl_toReg),
+    .out_wb_ctrl_regWrite(ex_mem_ctrl_data_wb_ctrl_regWrite)
   );
 
   dmem_rw u_dmem_rw(
@@ -427,8 +402,6 @@ module cpu(
     .in_result(mem_wb_in_result),
     .in_readData(mem_wb_in_readData),
     .in_pc(mem_wb_in_pc),
-    .flush(mem_wb_flush),
-    .valid(mem_wb_valid),
     .data_regWAddr(mem_wb_data_regWAddr),
     .data_result(mem_wb_data_result),
     .data_readData(mem_wb_data_readData),
@@ -440,12 +413,8 @@ module cpu(
     .reset(reset),
     .in_wb_ctrl_toReg(mem_wb_ctrl_in_wb_ctrl_toReg),
     .in_wb_ctrl_regWrite(mem_wb_ctrl_in_wb_ctrl_regWrite),
-    .in_noflush(mem_wb_ctrl_in_noflush),
-    .flush(mem_wb_ctrl_flush),
-    .valid(mem_wb_ctrl_valid),
     .data_wb_ctrl_toReg(mem_wb_ctrl_data_wb_ctrl_toReg),
-    .data_wb_ctrl_regWrite(mem_wb_ctrl_data_wb_ctrl_regWrite),
-    .data_noflush(mem_wb_ctrl_data_noflush)
+    .data_wb_ctrl_regWrite(mem_wb_ctrl_data_wb_ctrl_regWrite)
   );
 
   pc_gen u_pc_gen(
@@ -453,7 +422,6 @@ module cpu(
     .clk(clk  ),
     .alu_result(alu_aluOut  ),
     .branch_add(branch_add  ),
-    .id_ex_pc_next(id_ex_data_pc_next  ),
     .hazard_pcStall(hazard_pcStall  ),
     .hazard_pcFromTaken(hazard_pcFromTaken  ),
     .id_ex_ctrl_data_ex_ctrl_jump(id_ex_ctrl_data_ex_ctrl_jump  ),
@@ -464,6 +432,7 @@ module cpu(
   assign regs_wen = mem_wb_ctrl_data_wb_ctrl_regWrite & mem_wb_data_regWAddr != 5'h0; 
   assign regs_regWAddr = mem_wb_data_regWAddr;
   assign regs_regWData = mem_wb_ctrl_data_wb_ctrl_toReg ? mem_wb_data_readData : mem_wb_data_result;  
+  
   assign aluControl_funct3 = id_ex_data_funct3; 
   assign aluControl_funct7 = id_ex_data_funct7; 
   assign aluControl_itype = id_ex_ctrl_data_ex_ctrl_itype; 
@@ -480,7 +449,6 @@ module cpu(
   assign forwarding_exMemRw = ex_mem_ctrl_data_wb_ctrl_regWrite; 
   assign forwarding_memWBRd = mem_wb_data_regWAddr; 
   assign forwarding_memWBRw = mem_wb_ctrl_data_wb_ctrl_regWrite; 
-
 
   assign if_id_in_instr = imem_instr;  
   assign if_id_flush = hazard_IF_ID_flush; 
@@ -499,7 +467,6 @@ module cpu(
   assign id_ex_ctrl_in_ex_ctrl_jump = decode_jump; 
   assign id_ex_ctrl_in_mem_ctrl_memRead = decode_memRead; 
   assign id_ex_ctrl_in_mem_ctrl_memWrite = decode_memWrite; 
-  assign id_ex_ctrl_in_mem_ctrl_taken = 1'h0; 
   assign id_ex_ctrl_in_mem_ctrl_maskMode = if_id_instr[13:12]; 
   assign id_ex_ctrl_in_mem_ctrl_sext = ~if_id_instr[14];
   assign id_ex_ctrl_in_wb_ctrl_toReg = decode_toReg; 
@@ -512,29 +479,20 @@ module cpu(
   assign ex_mem_in_regRData2 = forward_rs2_data; 
   assign ex_mem_in_pc = id_ex_data_pc; 
   assign ex_mem_flush = hazard_EX_MEM_flush; 
-  assign ex_mem_valid = 1'b1; 
   assign ex_mem_ctrl_in_mem_ctrl_memRead = id_ex_ctrl_data_mem_ctrl_memRead; 
   assign ex_mem_ctrl_in_mem_ctrl_memWrite = id_ex_ctrl_data_mem_ctrl_memWrite; 
-  assign ex_mem_ctrl_in_mem_ctrl_taken = id_ex_ctrl_data_mem_ctrl_taken; 
   assign ex_mem_ctrl_in_mem_ctrl_maskMode = id_ex_ctrl_data_mem_ctrl_maskMode; 
   assign ex_mem_ctrl_in_mem_ctrl_sext = id_ex_ctrl_data_mem_ctrl_sext; 
   assign ex_mem_ctrl_in_wb_ctrl_toReg = id_ex_ctrl_data_wb_ctrl_toReg;
   assign ex_mem_ctrl_in_wb_ctrl_regWrite = id_ex_ctrl_data_wb_ctrl_regWrite;
-  assign ex_mem_ctrl_in_noflush = 1'h1; 
   assign ex_mem_ctrl_flush = hazard_EX_MEM_flush;
-  assign ex_mem_ctrl_valid = 1'h1; 
 
   assign mem_wb_in_regWAddr = ex_mem_data_regWAddr; 
   assign mem_wb_in_result = ex_mem_data_result; 
   assign mem_wb_in_readData = dmem_readData; 
   assign mem_wb_in_pc = ex_mem_data_pc; 
-  assign mem_wb_flush = 1'h0; 
-  assign mem_wb_valid = 1'h1; 
   assign mem_wb_ctrl_in_wb_ctrl_toReg = ex_mem_ctrl_data_wb_ctrl_toReg; 
   assign mem_wb_ctrl_in_wb_ctrl_regWrite = ex_mem_ctrl_data_wb_ctrl_regWrite; 
-  assign mem_wb_ctrl_in_noflush = 1'h1; 
-  assign mem_wb_ctrl_flush = 1'h0; 
-  assign mem_wb_ctrl_valid = 1'h1; 
 
   assign imem_addr = pc; 
   assign imem_valid = ~hazard_IF_ID_stall;

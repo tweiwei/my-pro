@@ -21,13 +21,12 @@ module hazard (
   output reg    IF_ID_flush
 );
 
-  wire ex_mem_taken = id_ex_jump[0] | (id_ex_branch 
-                               & ((alu_result_0 & ~id_ex_imm_31) | (~alu_result_0 & id_ex_imm_31)));
+  wire branch_do = ((alu_result_0 & ~id_ex_imm_31) | (~alu_result_0 & id_ex_imm_31));
+  wire ex_mem_taken = id_ex_jump[0] | (id_ex_branch & branch_do);
 
-  assign id_ex_memAccess = id_ex_memRead | id_ex_memWrite; 
+  wire id_ex_memAccess = id_ex_memRead | id_ex_memWrite; 
 
-  assign ex_mem_need_stall = ex_mem_memWrite & (ex_mem_maskMode == 2'h0
-                                  | ex_mem_maskMode == 2'h1); 
+  wire ex_mem_need_stall = ex_mem_memWrite & (ex_mem_maskMode == 2'h0 | ex_mem_maskMode == 2'h1); 
 
   always @(*) begin
     if(id_ex_memAccess && ex_mem_need_stall) begin

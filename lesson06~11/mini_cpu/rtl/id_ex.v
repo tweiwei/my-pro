@@ -9,7 +9,6 @@ module id_ex(
   input  [31:0] in_rs2_data,
   input  [31:0] in_rs1_data,
   input  [31:0] in_pc,
-  input  [31:0] in_pc_next,
   input  [4:0]  in_rs1_addr,
   input  [4:0]  in_rs2_addr,
   input         flush,
@@ -21,7 +20,6 @@ module id_ex(
   output [31:0] out_rs2_data,
   output [31:0] out_rs1_data,
   output [31:0] out_pc,
-  output [31:0] out_pc_next,
   output [4:0]  out_rs1_addr,
   output [4:0]  out_rs2_addr
 );
@@ -32,7 +30,6 @@ module id_ex(
   reg [31:0] reg_rs2_data; 
   reg [31:0] reg_rs1_data; 
   reg [31:0] reg_pc; 
-  reg [31:0] reg_pc_next; 
   reg [4:0] reg_rs1_addr; 
   reg [4:0] reg_rs2_addr; 
 
@@ -43,7 +40,6 @@ module id_ex(
   assign out_rs2_data = reg_rs2_data; 
   assign out_rs1_data = reg_rs1_data; 
   assign out_pc = reg_pc; 
-  assign out_pc_next = reg_pc_next; 
   assign out_rs1_addr = reg_rs1_addr; 
   assign out_rs2_addr = reg_rs2_addr; 
 
@@ -114,16 +110,6 @@ module id_ex(
       reg_pc <= 32'h0; 
     end else if (valid) begin 
       reg_pc <= in_pc; 
-    end
-  end
-
-  always @(posedge clk or posedge reset) begin
-    if (reset) begin 
-      reg_pc_next <= 32'h0; 
-    end else if (flush) begin 
-      reg_pc_next <= 32'h0; 
-    end else if (valid) begin 
-      reg_pc_next <= in_pc_next; 
     end
   end
 

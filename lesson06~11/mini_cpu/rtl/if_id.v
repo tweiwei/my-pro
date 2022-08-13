@@ -8,7 +8,6 @@ module if_id(
   input         valid,
   output [31:0] out_instr,
   output [31:0] out_pc,
-  output [31:0] out_pc_next,
   output        out_noflush
 );
 
@@ -17,11 +16,8 @@ module if_id(
   reg [31:0] reg_pc_next; 
   reg        reg_noflush; 
 
-  wire [31:0] in_pc_next = in_pc + 32'h4;   //下一个 PC值
-
   assign out_instr = reg_instr; 
   assign out_pc = reg_pc; 
-  assign out_pc_next = reg_pc_next; 
   assign out_noflush = reg_noflush; 
 
   //指令传递
@@ -43,17 +39,6 @@ module if_id(
       reg_pc <= 32'h0; 
     end else if (valid) begin 
       reg_pc <= in_pc; 
-    end
-  end
-
-  //下一条指令的PC
-  always @(posedge clk or posedge reset) begin
-    if (reset) begin 
-      reg_pc_next <= 32'h0; 
-    end else if (flush) begin 
-      reg_pc_next <= 32'h0; 
-    end else if (valid) begin 
-      reg_pc_next <= in_pc_next; 
     end
   end
 

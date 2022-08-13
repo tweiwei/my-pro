@@ -11,7 +11,6 @@ module id_ex_ctrl(
   input  [1:0] in_ex_ctrl_jump,
   input        in_mem_ctrl_mem_read,
   input        in_mem_ctrl_mem_write,
-  input        in_mem_ctrl_taken,
   input  [1:0] in_mem_ctrl_mask_mode,
   input        in_mem_ctrl_sext,
   input        in_wb_ctrl_to_reg,
@@ -28,7 +27,6 @@ module id_ex_ctrl(
   output [1:0] out_ex_ctrl_jump,
   output       out_mem_ctrl_mem_read,
   output       out_mem_ctrl_mem_write,
-  output       out_mem_ctrl_taken,
   output [1:0] out_mem_ctrl_mask_mode,
   output       out_mem_ctrl_sext,
   output       out_wb_ctrl_to_reg,
@@ -45,7 +43,6 @@ module id_ex_ctrl(
   reg [1:0] reg_ex_ctrl_jump; 
   reg  reg_mem_ctrl_mem_read; 
   reg  reg_mem_ctrl_mem_write; 
-  reg  reg_mem_ctrl_taken; 
   reg [1:0] reg_mem_ctrl_mask_mode; 
   reg  reg_mem_ctrl_sext; 
   reg  reg_wb_ctrl_to_reg; 
@@ -61,7 +58,6 @@ module id_ex_ctrl(
   assign out_ex_ctrl_jump = reg_ex_ctrl_jump; 
   assign out_mem_ctrl_mem_read = reg_mem_ctrl_mem_read; 
   assign out_mem_ctrl_mem_write = reg_mem_ctrl_mem_write; 
-  assign out_mem_ctrl_taken = reg_mem_ctrl_taken; 
   assign out_mem_ctrl_mask_mode = reg_mem_ctrl_mask_mode; 
   assign out_mem_ctrl_sext = reg_mem_ctrl_sext; 
   assign out_wb_ctrl_to_reg = reg_wb_ctrl_to_reg; 
@@ -155,16 +151,6 @@ module id_ex_ctrl(
       reg_mem_ctrl_mem_write <= 1'h0; 
     end else if (valid) begin 
       reg_mem_ctrl_mem_write <= in_mem_ctrl_mem_write; 
-    end
-  end
-  
-  always @(posedge clk or posedge reset) begin
-    if (reset) begin 
-      reg_mem_ctrl_taken <= 1'h0; 
-    end else if (flush) begin 
-      reg_mem_ctrl_taken <= 1'h0; 
-    end else if (valid) begin 
-      reg_mem_ctrl_taken <= in_mem_ctrl_taken; 
     end
   end
   

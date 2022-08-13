@@ -4,7 +4,6 @@ module pc_gen(
     clk,
     alu_result,
     branch_add,
-    id_ex_pc_next,
     hazard_pcStall,
     hazard_pcFromTaken,
     id_ex_ctrl_data_ex_ctrl_jump,
@@ -16,7 +15,6 @@ input         reset;
 input         clk;
 input [31:0]  alu_result;
 input [31:0]  branch_add;
-input [31:0]  id_ex_pc_next;
 input         hazard_pcStall;
 input         hazard_pcFromTaken;
 input [1:0]   id_ex_ctrl_data_ex_ctrl_jump;
@@ -26,7 +24,7 @@ output [31:0] pc_o;
 
 reg [31:0] pc;
 
-wire [31:0] next_pc = alu_result[0] ? branch_add : id_ex_pc_next; 
+wire [31:0] next_pc = alu_result[0] ? branch_add : pc + 32'h4; 
 
   always @(posedge clk or posedge reset) begin
     if (reset) begin 

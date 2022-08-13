@@ -9,13 +9,13 @@ module alu_ctrl (
     always @(*) begin
       case(aluCtrlOp)
         2'b00:  aluOp <= `ALU_OP_ADD;           // Load or Store
-        2'b10:  begin
+        2'b01:  begin
           if(itype & funct3[1:0] != 2'b01)
             aluOp <= {1'b0, funct3};
           else
             aluOp <= {funct7[5], funct3};   // normal ALUI/ALUR
         end
-        2'b01:  begin
+        2'b10:  begin
          // $display("~~~aluCtrl bxx~~~%d", funct3);
           case(funct3)                    // bxx
             `BEQ_FUNCT3:  aluOp <= `ALU_OP_EQ;

@@ -1,0 +1,1 @@
+cmd_/home/lmos/计算机基础/code/30/misc/miscdrv.ko := ld -r -m elf_x86_64  --build-id=sha1  -T scripts/module.lds -o /home/lmos/计算机基础/code/30/misc/miscdrv.ko /home/lmos/计算机基础/code/30/misc/miscdrv.o /home/lmos/计算机基础/code/30/misc/miscdrv.mod.o;  true

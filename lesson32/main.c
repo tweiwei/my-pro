@@ -11,6 +11,7 @@
 
 int main(int argc, char *argv[])
 {
+
 	int fd = -1, ret = -1;
 	struct input_event in;
 	char *kbstatestr[] = {"弹起", "按下"};

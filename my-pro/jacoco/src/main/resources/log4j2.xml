@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_HOME">./log</Property>
+        <!-- 日志文件的最大容量，超过该值就进行备份 -->
+        <Property name="file_max_size" value="500MB"/>
+        <!-- 日志文件的最大滚动次数，超过该值就删除旧日志文件 -->
+        <Property name="max_file_count" value="20"/>
+        <!-- 备份的文件夹名称 如下为：2020-02-01 -->
+        <Property name="backup_folder" value="$${date:yyyy-MM-dd}"/>
+        <!-- 备份文件的后缀，日志文件超过file_max_size会备份到filePattern指定的目录下 -->
+        <Property name="backup_file_suffix" value="%d{yyyy-MM-dd}.%i.gz"/>
+        <!-- Appender在将日志数据写入目标位置之前，一般会将日志数据通过Layout进行格式化。PatternLayout可以使用与C语言printf函数类似
+        的转换模式来指定输出格式。常见的配置如下：
+        - %d{yyyy-MM-dd HH:mm:ss.SSS} : 日志生成时间，输出格式为“年-月-日 时:分:秒.毫秒”
+        - %p : 日志输出格式
+        - %c : logger的名称
+        - %m : 日志内容，即 logger.info("message")
+        - %n : 换行符
+        - %T : 线程号
+        - %L : 日志输出所在行数
+        - %M : 日志输出所在方法名 -->
+        <Property name="log_pattern">[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%T][%C:%L:%M]\t%m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!--*********************控制台日志***********************-->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${log_pattern}"/>
+        </Console>
+
+        <!--*********************文件日志***********************-->
+        <!-- Rolling File Appender -->
+        <RollingRandomAccessFile name="StdoutAppender" fileName="${LOG_HOME}/stdout.log" immediateFlush="true"
+                                 filePattern="${LOG_HOME}/${backup_folder}/stdout.log.${backup_file_suffix}">
+            <PatternLayout pattern="${log_pattern}"/>
+            <Filters>
+                <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <!-- 设置日志文件切分参数 -->
+                <!--<OnStartupTriggeringPolicy/>-->
+                <!--设置日志基础文件大小，超过该大小就触发日志文件滚动更新-->
+                <SizeBasedTriggeringPolicy size="${file_max_size}"/>
+                <!--设置日志文件滚动更新的时间，依赖于文件命名filePattern的设置-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <!--设置日志的文件个数上限，不设置默认为7个，超过大小后会被覆盖；依赖于filePattern中的%i-->
+            <DefaultRolloverStrategy max="${max_file_count}"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="ErrorAppender" fileName="${LOG_HOME}/stderr.log" immediateFlush="true"
+                                 filePattern="${LOG_HOME}/${backup_folder}/stderr.log.${backup_file_suffix}">
+            <PatternLayout pattern="${log_pattern}"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${file_max_size}"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${max_file_count}"/>
+        </RollingRandomAccessFile>
+        <!-- 业务行为日志-->
+        <RollingRandomAccessFile name="AccessLogAppender"
+                                 fileName="${LOG_HOME}/access.log" immediateFlush="true"
+                                 filePattern="${LOG_HOME}/${backup_folder}/access.log.${backup_file_suffix}">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%t]\t%m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${file_max_size}"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${max_file_count}"/>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="unitAppender"
+                                 fileName="${LOG_HOME}/business.log" immediateFlush="true"
+                                 filePattern="${LOG_HOME}/${backup_folder}/business.log.${backup_file_suffix}">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%t]\t%m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${file_max_size}"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${max_file_count}"/>
+        </RollingRandomAccessFile>
+
+        <!-- httpClient请求和响应日志-->
+        <RollingRandomAccessFile name="HttpLogAppender"
+                                 fileName="${LOG_HOME}/http.log" immediateFlush="true"
+                                 filePattern="${LOG_HOME}/${backup_folder}/http.log.${backup_file_suffix}">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}]\t%msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${file_max_size}"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${max_file_count}"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <Appender-ref ref="console" level="info"/>
+            <Appender-ref ref="StdoutAppender"/>
+            <Appender-ref ref="ErrorAppender"/>
+        </Root>
+        <!-- access请求和响应日志-->
+        <logger name="Access" level="info" additivity="false">
+            <appender-ref ref="AccessLogAppender"/>
+        </logger>
+        <logger name="Http" level="info" additivity="false">
+            <appender-ref ref="HttpLogAppender"/>
+        </logger>
+        <logger name="Business" level="info" additivity="false">
+            <appender-ref ref="unitAppender"/>
+        </logger>
+        <!--spring日志-->
+        <Logger name="org.springframework" level="info"/>
+        <Logger name="com.alibaba" level="warn"/>
+
+    </Loggers>
+</Configuration>

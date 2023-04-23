@@ -1,0 +1,37 @@
+https://www.cnblogs.com/xiao2shiqi/p/16370471.html
+https://blog.csdn.net/yh4494/article/details/125651375
+https://github.com/1582871549/jacoco
+
+jaCoCo 提供了 maven 插件方便开发在项目中集成，提供了以下基本 goals，常用的包括:
+    prepare-agent
+    report
+    instrument
+    restore-instrumented-classes
+
+jacoco-maven-plugin 的 goals 与 Maven 生命周期的绑定关系:
+    validate
+    initialize .................. (prepare-agent 默认所属周期，注入 javaagent 参数)
+    generate-sources
+    process-sources
+    generate-resources
+    process-resources
+    compile
+    process-classes ............. (instrument 默认所属周期，offline 模式下对字节码插桩)
+    generate-test-sources
+    process-test-sources
+    generate-test-resources
+    process-test-resources
+    test-compile
+    process-test-classes
+    test ........................ (mvn test 执行的截止周期)
+    prepare-package ............. (restore-instrumented-classes 默认所属周期，offline 模式下恢复原始字节码)
+    package
+    pre-integration-test
+    integration-test
+    post-integration-test
+    verify ...................... (report 和 check 默认所属周期，report 用于生成覆盖率报告)
+    install
+    deploy
+
+在默认的绑定关系中，当我们执行 mvn test 的时候，restore-instrumented-classes 和 report 默认不会被运行，因此为方便 offline 模式使用，
+我们需要修改下插件绑定的执行 phase，保证我们运行 mvn test 时可以正常运行，生成覆盖率报告。

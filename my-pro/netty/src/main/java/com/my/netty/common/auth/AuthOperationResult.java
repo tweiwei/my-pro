@@ -1,4 +1,4 @@
-package com.my.netty.auth;
+package com.my.netty.common.auth;
 
 import com.my.netty.common.OperationResult;
 import lombok.Data;

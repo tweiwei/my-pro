@@ -1,4 +1,4 @@
-package com.my.netty.keepalive;
+package com.my.netty.common.keepalive;
 
 import com.my.netty.common.Operation;
 import com.my.netty.common.OperationResult;

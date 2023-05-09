@@ -1,4 +1,4 @@
-package com.my.netty.order;
+package com.my.netty.common.order;
 
 import com.my.netty.common.Operation;
 import com.my.netty.common.OperationResult;

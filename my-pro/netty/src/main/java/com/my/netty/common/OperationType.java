@@ -1,11 +1,11 @@
 package com.my.netty.common;
 
-import com.my.netty.auth.AuthOperation;
-import com.my.netty.auth.AuthOperationResult;
-import com.my.netty.keepalive.KeepAliveOperation;
-import com.my.netty.keepalive.KeepAliveOperationResult;
-import com.my.netty.order.OrderOperation;
-import com.my.netty.order.OrderOperationResult;
+import com.my.netty.common.auth.AuthOperation;
+import com.my.netty.common.auth.AuthOperationResult;
+import com.my.netty.common.keepalive.KeepAliveOperation;
+import com.my.netty.common.keepalive.KeepAliveOperationResult;
+import com.my.netty.common.order.OrderOperation;
+import com.my.netty.common.order.OrderOperationResult;
 
 import java.util.function.Predicate;
 

@@ -10,10 +10,12 @@ import java.util.List;
 public class OrderProtocolEncoder extends MessageToMessageEncoder<ResponseMessage> {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, ResponseMessage responseMessage, List<Object> out) throws Exception {
+        System.out.println("OrderProtocolEncoder");
+
         ByteBuf byteBuf = channelHandlerContext.alloc().buffer();
 
         responseMessage.encode(byteBuf);
 
-        out.add(responseMessage);
+        out.add(byteBuf);
     }
 }

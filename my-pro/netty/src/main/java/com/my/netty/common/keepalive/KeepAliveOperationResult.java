@@ -8,4 +8,7 @@ public class KeepAliveOperationResult extends OperationResult {
 
     private final long time;
 
+    public KeepAliveOperationResult(long time){
+        this.time = time;
+    }
 }

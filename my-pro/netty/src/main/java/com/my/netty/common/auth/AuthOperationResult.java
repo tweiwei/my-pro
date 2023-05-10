@@ -8,4 +8,8 @@ public class AuthOperationResult extends OperationResult {
 
     private final boolean passAuth;
 
+    public AuthOperationResult(boolean passAuth){
+        this.passAuth = passAuth;
+    }
+
 }

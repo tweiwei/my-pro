@@ -1,4 +1,4 @@
-package com.my.netty.server.codec;
+package com.my.netty.client.codec;
 
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 

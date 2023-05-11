@@ -1,0 +1,2 @@
+测试时内存检测级别设置最高
+-Dio.netty.leakDetection.level=PARANOID

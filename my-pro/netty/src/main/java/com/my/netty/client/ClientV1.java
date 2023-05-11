@@ -11,6 +11,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +19,7 @@ public class ClientV1 {
 
     public static void main(String[] args){
         Bootstrap b = new Bootstrap();
-        NioEventLoopGroup group = new NioEventLoopGroup();
+        NioEventLoopGroup group = new NioEventLoopGroup(new DefaultThreadFactory("worker"));
 
         try {
             b.channel(NioSocketChannel.class)
@@ -27,14 +28,14 @@ public class ClientV1 {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                         ChannelPipeline pipeline = nioSocketChannel.pipeline();
-                        pipeline.addLast(new OrderFrameDecoder());
-                        pipeline.addLast(new OrderFrameEncoder());
-                        pipeline.addLast(new OrderProtocolEncoder());
-                        pipeline.addLast(new OrderProtocolDecoder());
+                        pipeline.addLast("frameDecoder", new OrderFrameDecoder());
+                        pipeline.addLast("frameEncoder", new OrderFrameEncoder());
+                        pipeline.addLast("protocolEncoder", new OrderProtocolEncoder());
+                        pipeline.addLast("protocolDecoder", new OrderProtocolDecoder());
 
-                        pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+                        pipeline.addLast("logHandler", new LoggingHandler(LogLevel.INFO));
 
-                        pipeline.addLast(new OperationToRequestMessageEncoder());
+                        pipeline.addLast("operationToRequestMessageEncoder",new OperationToRequestMessageEncoder());
                     }
                 });
 

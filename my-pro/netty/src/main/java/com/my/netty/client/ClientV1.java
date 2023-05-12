@@ -11,15 +11,23 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
+import javax.net.ssl.SSLException;
 import java.util.concurrent.TimeUnit;
 
 public class ClientV1 {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws SSLException {
         Bootstrap b = new Bootstrap();
         NioEventLoopGroup group = new NioEventLoopGroup(new DefaultThreadFactory("worker"));
+
+        SslContextBuilder sslContextBuilder = SslContextBuilder.forClient();
+        sslContextBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE);
+        SslContext sslContext = sslContextBuilder.build();
 
         try {
             b.channel(NioSocketChannel.class)
@@ -28,6 +36,9 @@ public class ClientV1 {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                         ChannelPipeline pipeline = nioSocketChannel.pipeline();
+
+                        pipeline.addLast("ssl", sslContext.newHandler(nioSocketChannel.alloc()));
+
                         pipeline.addLast("frameDecoder", new OrderFrameDecoder());
                         pipeline.addLast("frameEncoder", new OrderFrameEncoder());
                         pipeline.addLast("protocolEncoder", new OrderProtocolEncoder());

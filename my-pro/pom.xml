@@ -14,6 +14,7 @@
         <module>jacoco</module>
         <module>netty</module>
         <module>mq</module>
+        <module>test</module>
     </modules>
 
     <properties>

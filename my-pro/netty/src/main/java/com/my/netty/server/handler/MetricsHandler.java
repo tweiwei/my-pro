@@ -3,7 +3,6 @@ package com.my.netty.server.handler;
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Slf4jReporter;
 import io.netty.buffer.ByteBufAllocatorMetric;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.PooledByteBufAllocatorMetric;
@@ -76,10 +75,10 @@ public class MetricsHandler extends ChannelDuplexHandler {
         });
 
         ConsoleReporter consoleReporter = ConsoleReporter.forRegistry(metricRegistry).build();
-        consoleReporter.start(10, TimeUnit.SECONDS);
+        consoleReporter.start(1000, TimeUnit.SECONDS);
 
-        Slf4jReporter slf4jReporter = Slf4jReporter.forRegistry(metricRegistry).build();
-        slf4jReporter.start(15, TimeUnit.SECONDS);
+//        Slf4jReporter slf4jReporter = Slf4jReporter.forRegistry(metricRegistry).build();
+//        slf4jReporter.start(15, TimeUnit.SECONDS);
     }
 
     @Override

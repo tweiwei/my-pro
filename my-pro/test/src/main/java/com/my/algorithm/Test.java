@@ -1,4 +1,4 @@
-package org.example;
+package com.my.algorithm;
 
 public class Test {
 

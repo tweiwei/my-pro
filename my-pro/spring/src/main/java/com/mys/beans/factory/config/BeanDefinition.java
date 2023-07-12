@@ -1,4 +1,4 @@
-package com.mys.beans.config;
+package com.mys.beans.factory.config;
 
 
 public class BeanDefinition {

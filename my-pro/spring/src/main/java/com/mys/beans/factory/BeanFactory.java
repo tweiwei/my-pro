@@ -1,6 +1,7 @@
 package com.mys.beans.factory;
 
 import com.mys.beans.BeansException;
+import com.mys.beans.factory.config.BeanDefinition;
 
 public interface BeanFactory {
 
@@ -10,4 +11,5 @@ public interface BeanFactory {
 
     void registerBean(String beanName, Object obj);
 
+    void registerBeanDefinition(BeanDefinition beanDefinition);
 }

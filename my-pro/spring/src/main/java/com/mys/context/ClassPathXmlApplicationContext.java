@@ -1,6 +1,6 @@
 package com.mys.context;
 
-import com.mys.beans.config.BeanDefinition;
+import com.mys.beans.factory.config.BeanDefinition;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;

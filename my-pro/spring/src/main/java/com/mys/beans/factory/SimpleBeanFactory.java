@@ -1,7 +1,7 @@
 package com.mys.beans.factory;
 
 import com.mys.beans.BeansException;
-import com.mys.beans.config.BeanDefinition;
+import com.mys.beans.factory.config.BeanDefinition;
 import com.mys.beans.support.DefaultSingletonBeanRegistry;
 
 import java.util.Map;
@@ -45,6 +45,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         this.registerSingleton(beanName, obj);
     }
 
+    @Override
     public void registerBeanDefinition(BeanDefinition beanDefinition){
         this.beanDefinitions.put(beanDefinition.getId(), beanDefinition);
     }

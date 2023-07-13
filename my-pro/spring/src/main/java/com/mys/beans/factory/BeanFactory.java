@@ -12,4 +12,10 @@ public interface BeanFactory {
     void registerBean(String beanName, Object obj);
 
     void registerBeanDefinition(BeanDefinition beanDefinition);
+
+    boolean isSingleton(String name);
+
+    boolean isPrototype(String name);
+
+    Class<?> getType(String name);
 }

@@ -9,5 +9,11 @@ public class PropertyValue {
         this.value = value;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public Object getValue() {
+        return value;
+    }
 }

@@ -1,6 +1,7 @@
 package com.mys.context;
 
 import com.mys.beans.BeansException;
+import com.mys.beans.factory.BeanFactory;
 import com.mys.beans.factory.SimpleBeanFactory;
 import com.mys.beans.factory.config.BeanDefinition;
 import org.dom4j.Document;
@@ -12,7 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassPathXmlApplicationContext {
+public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
     private List<BeanDefinition> beanDefinitions = new ArrayList<>();
 //    private Map<String, Object> singletons = new HashMap<>();
 
@@ -60,11 +61,36 @@ public class ClassPathXmlApplicationContext {
         return this.beanFactory.getBean(beanName);
     }
 
-    public Boolean containsBean(String name){
+    public boolean containsBean(String name){
         return this.beanFactory.containsBean(name);
     }
 
     public void registerBean(String beanName, Object obj){
         this.beanFactory.registerBean(beanName, obj);
+    }
+
+    @Override
+    public void registerBeanDefinition(BeanDefinition beanDefinition) {
+
+    }
+
+    @Override
+    public boolean isSingleton(String name) {
+        return false;
+    }
+
+    @Override
+    public boolean isPrototype(String name) {
+        return false;
+    }
+
+    @Override
+    public Class<?> getType(String name) {
+        return null;
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+
     }
 }

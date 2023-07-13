@@ -1,5 +1,7 @@
 package com.mys.context;
 
+import com.mys.beans.BeansException;
+import com.mys.beans.factory.SimpleBeanFactory;
 import com.mys.beans.factory.config.BeanDefinition;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -8,13 +10,13 @@ import org.dom4j.io.SAXReader;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ClassPathXmlApplicationContext {
     private List<BeanDefinition> beanDefinitions = new ArrayList<>();
-    private Map<String, Object> singletons = new HashMap<>();
+//    private Map<String, Object> singletons = new HashMap<>();
+
+    private SimpleBeanFactory beanFactory = new SimpleBeanFactory();
 
     public ClassPathXmlApplicationContext(String fileName){
         this.readXml(fileName);
@@ -31,6 +33,8 @@ public class ClassPathXmlApplicationContext {
                 String beanId = element.attributeValue("id");
                 String beanClassName = element.attributeValue("class");
                 BeanDefinition beanDefinition = new BeanDefinition(beanId, beanClassName);
+
+                this.beanFactory.registerBeanDefinition(beanDefinition);
                 beanDefinitions.add(beanDefinition);
             }
         } catch (DocumentException e) {
@@ -41,7 +45,7 @@ public class ClassPathXmlApplicationContext {
     private void instanceBeans(){
         for(BeanDefinition beanDefinition : beanDefinitions){
             try {
-                singletons.put(beanDefinition.getId(), Class.forName(beanDefinition.getClassName()).newInstance());
+                this.beanFactory.registerBean(beanDefinition.getId(), Class.forName(beanDefinition.getClassName()).newInstance());
             } catch (InstantiationException e) {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
@@ -52,7 +56,15 @@ public class ClassPathXmlApplicationContext {
         }
     }
 
-    public Object getBean(String beanName){
-        return singletons.get(beanName);
+    public Object getBean(String beanName) throws BeansException {
+        return this.beanFactory.getBean(beanName);
+    }
+
+    public Boolean containsBean(String name){
+        return this.beanFactory.containsBean(name);
+    }
+
+    public void registerBean(String beanName, Object obj){
+        this.beanFactory.registerBean(beanName, obj);
     }
 }

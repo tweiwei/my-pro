@@ -5,6 +5,8 @@ import com.mys.beans.factory.config.BeanDefinition;
 import com.mys.core.Resource;
 import org.dom4j.Element;
 
+import java.util.List;
+
 public class XmlBeanDefinitionReader {
     SimpleBeanFactory beanFactory;
 
@@ -18,6 +20,9 @@ public class XmlBeanDefinitionReader {
             String beanId = element.attributeValue("id");
             String beanClassName = element.attributeValue("class");
             BeanDefinition beanDefinition = new BeanDefinition(beanId, beanClassName);
+
+            List<Element> propertyElements = element.elements("property");
+
 
             this.beanFactory.registerBeanDefinition(beanDefinition);
         }
